@@ -17,6 +17,11 @@ WHERE PROFESSOR_NAME NOT LIKE '___';
 -- 춘 기술대학교의 남자 교수들의 이름과 나이를 출력하는 SQL 문장을 작성하시오.
 -- 단 이 때 나이가 적은 사람에서 많은 사람 순서로 화면에 출력되도록 만드시오.
 -- (단, 교수 중 2000년 이후 출생자는 없으며 출력 헤더는 "교수이름"으로 한다. 나이는 '만'으로 계산한다.)
+SELECT PROFESSOR_NAME 교수이름,
+FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE('19'||SUBSTR(PROFESSOR_SSN, 1, 6),'YYYYMMDD')) /12) 나이
+FROM TB_PROFESSOR
+WHERE SUBSTR(PROFESSOR_SSN, 8, 1) = '1'
+ORDER BY 나이;
 
 --4.
 -- 교수들의 이름 중 성을 제외한 이름만 출력하는 SQL 문장을 작성하시오. 출력 헤더는 "이름"이 찍히도록 한다.
@@ -26,7 +31,9 @@ FROM TB_PROFESSOR;
 --5. 
 -- 춘 기술대학교의 재수생 입학자를 구하려고 한다 어떻게 찾아낼 거인가?
 -- 이때, 19살에 입학하면 재수를 하지 않은 것으로 간주한다.
-
+SELECT STUDENT_NO, STUDENT_NAME
+FROM TB_STUDENT
+WHERE 
 --6. 
 -- 2020년 크리스마스는 무슨 요일인가?
 --'DAY': 금요일 'DY': 금 'D': 6
@@ -77,16 +84,26 @@ GROUP BY SUBSTR(TERM_NO,1,4)
 ORDER BY 1;
 -- 13번
 -- 학과 별 휴학생 수를 파악하고자 한다. 학과 번호와 휴학생 수를 표시하는 SQL문장을 작성하시오.
-
+SELECT DEPARTMENT_NO 학생코드명 ,COUNT(*) "휴학생 수"
+FROM TB_STUDENT
+GROUP BY DEPARTMENT_NO 
+HAVING ABSENCE_YN = 'Y';
 -- 14번
 -- 춘 대학교에 다니는 동명이인 학생들의 이름을 찾고자 한다.
 -- 어떤 SQL 문장을 사용하면 가능하겠는가?
-
--- 15번
+SELECT STUDENT_NAME 동일이름 , COUNT(STUDENT_NAME) "동명인 수"
+FROM TB_STUDENT ts 
+GROUP BY STUDENT_NAME
+HAVING COUNT(STUDENT_NAME) > 1
+ORDER BY STUDENT_NAME;
+ -- 15번
 -- 학번이 A112113인 김고운 학생의 년도, 학기 별 평점과 년도 별 누적 평점, 총 평점을 구하는 SQL문을 작성하시오.
 -- (단, 평점은 소수점 1자리까지만 반올림하여 표시한다.)
-
-
+SELECT NVL(SUBSTR(TERM_NO,1,4), ' ') AS 년도, NVL(SUBSTR(TERM_NO,5,2),' ') AS 학기, ROUND(AVG(POINT),1) AS 평점
+FROM TB_GRADE
+WHERE STUDENT_NO = 'A112113'
+GROUP BY ROLLUP(SUBSTR(TERM_NO,1,4),SUBSTR(TERM_NO,5,2))
+ORDER BY SUBSTR(TERM_NO,1,4);
 
 
 
