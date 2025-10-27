@@ -22,7 +22,6 @@ FLOOR(MONTHS_BETWEEN(SYSDATE, TO_DATE('19'||SUBSTR(PROFESSOR_SSN, 1, 6),'YYYYMMD
 FROM TB_PROFESSOR
 WHERE SUBSTR(PROFESSOR_SSN, 8, 1) = '1'
 ORDER BY 나이;
-
 --4.
 -- 교수들의 이름 중 성을 제외한 이름만 출력하는 SQL 문장을 작성하시오. 출력 헤더는 "이름"이 찍히도록 한다.
 -- (성이 2자인 경우의 교수는 없다고 가정하시오)
@@ -35,13 +34,13 @@ SELECT STUDENT_NO, STUDENT_NAME
 FROM TB_STUDENT
 WHERE EXTRACT(YEAR FROM ENTRANCE_DATE) - EXTRACT(YEAR FROM TO_DATE('19'|| SUBSTR(STUDENT_SSN,1,6),'YYYYMMDD'))  > 19;
 
-EXTRACT(YEAR FROM ENTRANCE_DATE) -- 입학년도
+-- EXTRACT(YEAR FROM ENTRANCE_DATE) -- 입학년도
+-- EXTRACT(YEAR FROM TO_DATE('19'|| SUBSTR(STUDENT_SSN,1,6),'YYYYMMDD')) -- 학생 생년월일
 
-EXTRACT(YEAR FROM TO_DATE('19'|| SUBSTR(STUDENT_SSN,1,6),'YYYYMMDD')) -- 학생 생년월일
 --6. 
 -- 2020년 크리스마스는 무슨 요일인가?
 --'DAY': 금요일 'DY': 금 'D': 6
-SELECT TO_CHAR(TO_DATE('2020/12/25'),'DAY')
+SELECT TO_CHAR(TO_DATE('2020/12/25'), 'DAY') 
 FROM DUAL;
 --7.
 -- TO_DATE('99/10/11', 'YY/MM/DD'), 	
@@ -86,12 +85,13 @@ FROM TB_GRADE
 WHERE STUDENT_NO = 'A112113'
 GROUP BY SUBSTR(TERM_NO,1,4)
 ORDER BY 1;
- 13번
- 학과 별 휴학생 수를 파악하고자 한다. 학과 번호와 휴학생 수를 표시하는 SQL문장을 작성하시오.
-SELECT DEPARTMENT_NO 학생코드명 ,COUNT(*) "휴학생 수"
+--13번
+--학과 별 휴학생 수를 파악하고자 한다. 학과 번호와 휴학생 수를 표시하는 SQL문장을 작성하시오.
+SELECT DEPARTMENT_NO 학과코드명, 
+SUM(DECODE(ABSENCE_YN, 'Y', 1,'N', 0)) "휴학생 수"
 FROM TB_STUDENT
-GROUP BY DEPARTMENT_NO 
-HAVING ABSENCE_YN = 'Y';
+GROUP BY DEPARTMENT_NO
+ORDER BY 1;
 -- 14번
 -- 춘 대학교에 다니는 동명이인 학생들의 이름을 찾고자 한다.
 -- 어떤 SQL 문장을 사용하면 가능하겠는가?
